@@ -4,20 +4,24 @@ import axios from "axios";
 function Login() {
 
   const [password, setPassword] = useState("");
-  const [email, setEmail] = useState("");
+  const [username, setUsername] = useState("");
+  const [error, setError] = useState("");
+  const [msg, setMsg] = useState("");
   const navigate = useNavigate();
-
+  
 const handleSubmit =async(e) =>{
     e.preventDefault();
     try {
-      const {data} = await axios.post("http://localhost:8080/api/auth/login",{
-        email:email,
-        password:password
+      const { data}  = await axios.post("http://localhost:8080/api/users",{
+        username,
+        password
       })
       console.log(data);
-      navigate("/home")
+      setMsg(data.message);
+      navigate("/home");
     } catch (error) {
-      console.log(error);
+      // console.log(error);
+      setError(error.response.data.message);
     }
 }
 
@@ -25,13 +29,15 @@ const handleSubmit =async(e) =>{
     <div className="container my-3">
 <form onSubmit={handleSubmit}>
   <div className="mb-3">
-    <label forhtml="exampleInputEmail1" className="form-label">Email address</label>
-    <input type="email" className="form-control" value={email} onChange={e=>setEmail(e.target.value)} id="exampleInputEmail1" aria-describedby="emailHelp"/>
+    <label forhtml="exampleInputText1" className="form-label">Username</label>
+    <input type="text" className="form-control" value={username} onChange={e=>setUsername(e.target.value)} id="exampleInputText1" aria-describedby="emailHelp"/>
   </div>
   <div className="mb-3">
     <label forhtml="exampleInputPassword1" className="form-label">Password</label>
     <input type="password" value={password} className="form-control" onChange={e=>setPassword(e.target.value)} id="exampleInputPassword1"/>
   </div>
+            {error && <div className="text-danger my-3">{error}</div>}
+						{msg && <div className="text-success my-3">{msg}</div>}
   <button type="submit" className="btn btn-primary">Submit</button>
 </form>
 </div>
